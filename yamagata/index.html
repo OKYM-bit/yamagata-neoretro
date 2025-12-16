@@ -31,6 +31,7 @@
                         'float': 'float 6s ease-in-out infinite',
                         'glitch': 'glitch 1s linear infinite',
                         'spin-slow': 'spin 12s linear infinite',
+                        'marquee': 'marquee 25s linear infinite', /* ←ここを追加しました！ */
                     },
                     keyframes: {
                         float: {
@@ -41,6 +42,10 @@
                             '2%, 64%': { transform: 'translate(2px,0) skew(0deg)' },
                             '4%, 60%': { transform: 'translate(-2px,0) skew(0deg)' },
                             '62%': { transform: 'translate(0,0) skew(5deg)' },
+                        },
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-100%)' },
                         }
                     }
                 }
@@ -49,57 +54,29 @@
     </script>
     <style type="text/tailwindcss">
         @layer utilities {
-            .text-outline {
-                -webkit-text-stroke: 1px var(--ne-black);
-            }
-            .retro-shadow {
-                box-shadow: 8px 8px 0px 0px rgba(255, 255, 255, 0.2);
-            }
+            .text-outline { -webkit-text-stroke: 1px var(--ne-black); }
+            .retro-shadow { box-shadow: 8px 8px 0px 0px rgba(255, 255, 255, 0.2); }
             .hover-trigger:hover .retro-shadow {
                 box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 0.4);
                 transform: translate(4px, 4px);
             }
         }
-        /* カスタムカーソル */
         #cursor {
-            width: 20px;
-            height: 20px;
+            width: 20px; height: 20px;
             border: 2px solid var(--ne-white);
             background: rgba(255, 0, 60, 0.5);
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
+            position: fixed; pointer-events: none; z-index: 9999;
             transition: width 0.3s, height 0.3s, background 0.3s;
-            mix-blend-mode: difference;
-            transform: translate(-50%, -50%);
+            mix-blend-mode: difference; transform: translate(-50%, -50%);
+            display: none; /* 初期状態は非表示（JSで表示制御） */
         }
-        #cursor.hovered {
-            width: 50px;
-            height: 50px;
-            background: var(--ne-blue);
-            border-radius: 50%;
+        @media (hover: hover) and (pointer: fine) {
+            #cursor { display: block; } /* PCなどマウスがある時だけ表示 */
+            body { cursor: none; }
         }
-        #cursor.active {
-            width: 80px;
-            height: 80px;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGxpbmUgeDE9IjE4IiB5MT0iNiIgeDI9IjYiIHkyPSIxOCI+PC9saW5lPjxsaW5lIHgxPSI2IiB5MT0iNiIgeDI9IjE4IiB5Mj0iMTgiPjwvbGluZT48L3N2Zz4=') no-repeat center;
-            border: 2px solid var(--ne-red);
-        }
-        body {
-            cursor: none; /* デフォルトカーソルを隠す */
-            background-color: #050505; /* 背景色を強制的に黒に */
-        }
-        /* スクロールバー装飾 */
-        ::-webkit-scrollbar {
-            width: 12px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--ne-black);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--ne-blue);
-            border: 2px solid var(--ne-black);
-        }
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: var(--ne-black); }
+        ::-webkit-scrollbar-thumb { background: var(--ne-blue); border: 2px solid var(--ne-black); }
     </style>
 </head>
 <body class="bg-ne-black text-ne-white overflow-x-hidden selection:bg-ne-red selection:text-ne-white">
@@ -146,6 +123,8 @@
             <div class="whitespace-nowrap font-pixel text-xl flex animate-marquee">
                 <span class="mx-4">*** UNLIMITED DIY ***</span><span class="mx-4">[PRESS START]</span><span class="mx-4">*** PETS OK ***</span><span class="mx-4">[INSERT COIN]</span><span class="mx-4">*** SINGLE HOUSE ONLY ***</span><span class="mx-4">[LEVEL UP]</span>
                 <span class="mx-4">*** UNLIMITED DIY ***</span><span class="mx-4">[PRESS START]</span><span class="mx-4">*** PETS OK ***</span><span class="mx-4">[INSERT COIN]</span><span class="mx-4">*** SINGLE HOUSE ONLY ***</span><span class="mx-4">[LEVEL UP]</span>
+                <span class="mx-4">*** UNLIMITED DIY ***</span><span class="mx-4">[PRESS START]</span><span class="mx-4">*** PETS OK ***</span><span class="mx-4">[INSERT COIN]</span><span class="mx-4">*** SINGLE HOUSE ONLY ***</span><span class="mx-4">[LEVEL UP]</span>
+                <span class="mx-4">*** UNLIMITED DIY ***</span><span class="mx-4">[PRESS START]</span><span class="mx-4">*** PETS OK ***</span><span class="mx-4">[INSERT COIN]</span><span class="mx-4">*** SINGLE HOUSE ONLY ***</span><span class="mx-4">[LEVEL UP]</span>
             </div>
         </div>
 
@@ -166,9 +145,8 @@
 
                 <div class="relative w-full aspect-square border-4 border-ne-white p-2 bg-ne-black hover-trigger group" id="destroy-zone" data-cursor="active">
                     <div class="absolute inset-0 z-20 transition-all duration-200 pointer-events-none mix-blend-hard-light" id="pixel-layer">
-                        <div class="w-full h-full bg-gradient-to-tr from-ne-black via-transparent to-ne-white opacity-20"></div>
+                         <div class="w-full h-full bg-gradient-to-tr from-ne-black via-transparent to-ne-white opacity-20"></div>
                     </div>
-                    
                     <div class="absolute inset-0 z-10 bg-ne-black flex items-center justify-center overflow-hidden">
                         <div class="absolute inset-0 bg-gradient-to-br from-ne-red via-ne-yellow to-ne-blue opacity-50 animate-spin-slow blur-xl"></div>
                         <h3 class="relative z-30 font-pixel text-5xl md:text-7xl text-ne-white text-center leading-tight">
@@ -176,7 +154,6 @@
                         </h3>
                         <div class="absolute top-0 left-0 w-full h-full bg-repeat opacity-20 animate-glitch" style="background-image: radial-gradient(#fff 2px, transparent 2px); background-size: 20px 20px;"></div>
                     </div>
-
                     <div class="absolute bottom-4 right-4 font-pixel text-xs text-ne-black bg-ne-white px-2 py-1">
                         [MOVE CURSOR TO DESTROY]
                     </div>
@@ -186,7 +163,6 @@
 
         <section class="relative w-full py-32 bg-ne-white text-ne-black overflow-hidden">
             <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 10px 10px;"></div>
-            
             <div class="container mx-auto px-6 text-center relative z-10">
                  <span class="font-mono text-ne-blue text-sm mb-4 block">&gt; MISSION 02: FAMILY</span>
                 <h2 class="text-5xl md:text-7xl font-black mb-6 font-serif">
@@ -197,7 +173,6 @@
                     // どんなバディも、ここでは主役だ。
                 </p>
             </div>
-
             <div class="relative w-full h-[400px] flex justify-center items-center overflow-hidden" id="sticker-zone">
                 <div class="sticker absolute font-pixel text-ne-white bg-ne-red p-4 shadow-[4px_4px_0px_0px_var(--ne-black)] rotate-12 hover-trigger" data-cursor="hovered" data-speed="0.8">
                     <span class="block text-2xl mb-2">👾 DOGS!</span>
@@ -207,4 +182,148 @@
                      <span class="block text-3xl mb-2">😻 CATS!</span>
                      <div class="w-12 h-12 bg-ne-black mx-auto rounded-full"></div>
                 </div>
-                <div class="sticker absolute font-pixel text-ne-white bg-ne-blue p-
+                <div class="sticker absolute font-pixel text-ne-white bg-ne-blue p-3 shadow-[4px_4px_0px_0px_var(--ne-black)] rotate-[20deg] bottom-1/3 right-1/4 hover-trigger" data-cursor="hovered" data-speed="1.5">
+                     <span class="block text-xl">🦕 DINO?</span>
+                </div>
+                <div class="sticker absolute font-pixel text-ne-white bg-ne-green p-5 shadow-[4px_4px_0px_0px_var(--ne-black)] -rotate-12 bottom-1/4 left-1/3 hover-trigger" data-cursor="hovered" data-speed="0.6">
+                     <span class="block text-2xl">👽 ALIENS?</span>
+                </div>
+                <div class="absolute z-0 opacity-10 font-pixel text-[15vw] leading-none text-center pointer-events-none select-none text-ne-blue">ALL<br>OK!</div>
+            </div>
+        </section>
+
+        <section id="flow" class="relative w-full py-32 bg-ne-black text-ne-white">
+            <div class="container mx-auto px-6 relative z-10">
+                <span class="font-mono text-ne-green text-sm mb-4 block">&gt; GAME MAP</span>
+                <h2 class="text-4xl md:text-6xl font-black mb-16 font-serif">
+                    入居までの<br>攻略ルート
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                    <svg class="hidden md:block absolute top-1/2 left-0 w-full h-20 -translate-y-1/2 pointer-events-none z-0" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0,10 H33% Q50%,10 50%,50 Q50%,90 66%,90 H100%" stroke="var(--ne-blue)" stroke-width="4" fill="none" stroke-dasharray="10,10" class="animate-pulse"/>
+                    </svg>
+                    <div class="relative z-10 bg-ne-black border-4 border-ne-blue p-6 retro-shadow hover-trigger group rounded-none" data-cursor="hovered">
+                        <div class="font-pixel text-ne-yellow text-4xl mb-4 absolute -top-6 -left-4 bg-ne-black px-2">STAGE 1</div>
+                        <div class="w-16 h-16 bg-ne-blue mb-6 animate-bounce-slow mx-auto" style="clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div> <h3 class="text-xl font-bold mb-2 font-serif">サーチ＆内見</h3>
+                        <p class="font-mono text-sm text-ne-white/70">// ターゲット物件を発見せよ。<br>現地でリアルな空気感をスキャン。</p>
+                    </div>
+                    <div class="relative z-10 bg-ne-black border-4 border-ne-red p-6 retro-shadow hover-trigger group rounded-none mt-12 md:mt-24" data-cursor="hovered">
+                        <div class="font-pixel text-ne-yellow text-4xl mb-4 absolute -top-6 -left-4 bg-ne-black px-2">STAGE 2</div>
+                         <div class="w-16 h-16 bg-ne-red mb-6 animate-spin-slow mx-auto" style="clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);"></div> <h3 class="text-xl font-bold mb-2 font-serif">契約＆作戦会議</h3>
+                        <p class="font-mono text-sm text-ne-white/70">// ボス（オーナー）と交渉。<br>DIY計画という名のチートコードを入力。</p>
+                    </div>
+                    <div class="relative z-10 bg-ne-black border-4 border-ne-green p-6 retro-shadow hover-trigger group rounded-none mt-12 md:mt-0" data-cursor="hovered">
+                        <div class="font-pixel text-ne-yellow text-4xl mb-4 absolute -top-6 -left-4 bg-ne-black px-2">STAGE 3</div>
+                         <div class="w-16 h-16 bg-ne-green mb-6 animate-pulse mx-auto" style="clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);"></div> <h3 class="text-xl font-bold mb-2 font-serif">ゲームスタート</h3>
+                        <p class="font-mono text-sm text-ne-white/70">// 鍵（キーアイテム）を入手。<br>君だけのワールドビルディングが始まる。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-40 text-center bg-ne-blue relative overflow-hidden">
+             <div class="absolute inset-0 bg-repeat opacity-20 mix-blend-overlay animate-glitch" style="background-image: repeating-linear-gradient(45deg, #000 0, #000 2px, transparent 0, transparent 50%);"></div>
+            <div class="relative z-10 container mx-auto px-6">
+                <h2 class="text-4xl md:text-6xl mb-12 font-serif font-black text-ne-white">
+                    準備はいいか？<br><span class="text-ne-yellow" style="text-shadow: 3px 3px 0 var(--ne-red);">新しい冒険へ。</span>
+                </h2>
+                <a href="#" class="relative inline-block group hover-trigger my-8" data-cursor="hovered">
+                    <div class="absolute inset-0 bg-ne-yellow translate-x-2 translate-y-2 group-hover:translate-x-4 group-hover:translate-y-4 transition-transform w-full h-full border-4 border-ne-black"></div>
+                    <div class="relative bg-ne-red text-ne-white px-12 md:px-24 py-6 font-pixel text-2xl md:text-3xl border-4 border-ne-black active:translate-x-2 active:translate-y-2 transition-transform flex items-center gap-4">
+                        <span>PRESS START</span> <span class="animate-pulse">▶</span>
+                    </div>
+                </a>
+                <p class="mt-12 text-ne-white/80 font-mono text-sm">// 営業マンは出現しません。<br>// セーブデータは安全です。</p>
+            </div>
+            <footer class="mt-32 text-xs font-pixel text-ne-white/60 relative z-10">© 2025 YAR. | GAME OVER / CONTINUE?</footer>
+        </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+    <script>
+        console.log("Starting Animation System..."); // 動作チェック用ログ
+        
+        try {
+            // Smooth Scroll
+            const lenis = new Lenis({ duration: 1.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
+            function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+            requestAnimationFrame(raf);
+
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Cursor Logic
+            const cursor = document.getElementById('cursor');
+            const hoverTriggers = document.querySelectorAll('.hover-trigger');
+            
+            document.addEventListener('mousemove', (e) => {
+                // PCのみカーソル追従
+                gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.15, ease: "power2.out" });
+                
+                // Destroy Zone Logic
+                const destroyZone = document.getElementById('destroy-zone');
+                const pixelLayer = document.getElementById('pixel-layer');
+                if (destroyZone && pixelLayer && destroyZone.matches(':hover')) {
+                    const rect = destroyZone.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    const dist = Math.sqrt(Math.pow(e.clientX - centerX, 2) + Math.pow(e.clientY - centerY, 2));
+                    const maxDist = rect.width / 1.5;
+                    const opacity = Math.min(1, dist / maxDist);
+                    gsap.to(pixelLayer, { opacity: opacity > 0.2 ? opacity : 0, filter: `blur(${ (1 - opacity) * 20 }px)`, duration: 0.2 });
+                } else if (pixelLayer) {
+                     gsap.to(pixelLayer, { opacity: 0.2, filter: 'blur(0px)', duration: 0.5 });
+                }
+
+                // Sticker Logic
+                document.querySelectorAll('.sticker').forEach(sticker => {
+                    const speed = sticker.getAttribute('data-speed') || 1;
+                    const x = (window.innerWidth / 2 - e.clientX) * speed / 20;
+                    const y = (window.innerHeight / 2 - e.clientY) * speed / 20;
+                    gsap.to(sticker, { x: x, y: y, duration: 0.5, ease: "back.out(1.5)" });
+                });
+            });
+
+            // Cursor States
+            hoverTriggers.forEach(t => {
+                t.addEventListener('mouseenter', () => { 
+                    const type = t.getAttribute('data-cursor') || 'hovered';
+                    cursor.classList.add(type); 
+                });
+                t.addEventListener('mouseleave', () => { cursor.classList.remove('hovered', 'active'); });
+            });
+
+            // Intro Animations
+            gsap.from(".glitch-text", {
+                scale: 1.5, opacity: 0, filter: "blur(20px)",
+                duration: 1.5, ease: "elastic.out(1, 0.5)", delay: 0.5
+            });
+
+            // Floating Stickers
+            document.querySelectorAll('.sticker').forEach(sticker => {
+                gsap.to(sticker, {
+                    y: "random(-20, 20)", x: "random(-20, 20)", rotation: "random(-10, 10)",
+                    duration: "random(2, 4)", repeat: -1, yoyo: true, ease: "sine.inOut"
+                });
+            });
+
+            // Scroll Animations
+            gsap.utils.toArray('section').forEach((section, i) => {
+                gsap.to(section, {
+                    scrollTrigger: { trigger: section, start: "top bottom", end: "bottom top", scrub: true },
+                    rotation: (i % 2 === 0 ? 2 : -2), scale: 1.05, ease: "none"
+                });
+            });
+
+            gsap.from("#flow path", {
+                scrollTrigger: { trigger: "#flow", start: "top center", end: "bottom center", scrub: 1 },
+                strokeDashoffset: 1000, ease: "none"
+            });
+            console.log("Animation System Online!");
+        } catch (error) {
+            console.error("Animation Error:", error);
+        }
+    </script>
+</body>
+</html>
